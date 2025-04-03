@@ -1,4 +1,4 @@
 @echo off
 git add .
-git commit -m "Commit generico"
+git commit -m %*
 git push origin main
