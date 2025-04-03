@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,7 +12,63 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: GPSAreaCalculator(),
+      home: MainScreen(),
+    );
+  }
+}
+
+class MainScreen extends StatefulWidget {
+  @override
+  _MainScreenState createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  PersistentTabController _controller = PersistentTabController(initialIndex: 0);
+
+  List<Widget> _buildScreens() {
+    return [
+      GPSAreaCalculator(),
+      Center(child: Text("Mapa (Em desenvolvimento)")),
+      Center(child: Text("Configurações (Em desenvolvimento)")),
+    ];
+  }
+
+  List<PersistentBottomNavBarItem> _navBarsItems() {
+    return [
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.calculate),
+        title: ("Calculadora"),
+        activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
+        inactiveColorPrimary: Colors.grey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.map),
+        title: ("Mapa"),
+        activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
+        inactiveColorPrimary: Colors.grey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.settings),
+        title: ("Config"),
+        activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
+        inactiveColorPrimary: Colors.grey,
+      ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PersistentTabView(
+      context,
+      controller: _controller,
+      screens: _buildScreens(),
+      items: _navBarsItems(),
+      confineToSafeArea: true,
+      backgroundColor: const Color.fromARGB(255, 236, 235, 235),
+      handleAndroidBackButtonPress: true,
+      resizeToAvoidBottomInset: true,
+      stateManagement: true,
+      navBarStyle: NavBarStyle.style3,
     );
   }
 }
