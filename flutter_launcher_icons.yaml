@@ -9,6 +9,9 @@ flutter_launcher_icons:
   # adaptive_icon_foreground: "assets/icon/foreground.png"
   # adaptive_icon_monochrome: "assets/icon/monochrome.png"
 
+  adaptive_icon_background: "#00000000" # fundo transparente (usar cor com alpha 00)
+  adaptive_icon_foreground: "assets/app/logo.png" # o logo em si
+
   ios: true
   # image_path_ios: "assets/icon/icon.png"
   remove_alpha_channel_ios: true
@@ -29,4 +32,4 @@ flutter_launcher_icons:
 
   macos:
     generate: true
-    image_path: "path/to/image.png"
+    image_path: "assets/app/logo.png"
