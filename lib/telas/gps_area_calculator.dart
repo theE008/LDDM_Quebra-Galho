@@ -61,7 +61,14 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
         : LatLng(-15.793889, -47.882778); // Brasília como fallback
 
     return Scaffold(
-      appBar: AppBar(title: Text("Calculadora de Área GPS")),
+      appBar: AppBar(backgroundColor: Color(0xFF121212), // mesma cor de fundo que o app
+                     elevation: 0,
+                     centerTitle: true,
+                     title: Image.asset(
+                            'assets/app/logo.png',
+                            height: 40, // ajuste a altura da logo conforme necessário
+                            ),
+                    ),
       body: Column(
         children: [
           Padding(

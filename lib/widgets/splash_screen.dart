@@ -11,21 +11,34 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeIn;
+  late Animation<Offset> _logoSlide;
+  late Animation<Offset> _textSlide;
 
   @override
   void initState() {
     super.initState();
 
     _controller = AnimationController(
-      duration: Duration(seconds: 2),
+      duration: Duration(milliseconds: 2000),
       vsync: this,
     );
 
-    _fadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+    _fadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
+    );
+
+    _logoSlide = Tween<Offset>(
+      begin: Offset(0, 0.2),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+
+    _textSlide = Tween<Offset>(
+      begin: Offset(0, 0.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
 
-    // Espera 3 segundos e navega para a MainScreen
     Timer(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -50,18 +63,31 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                'assets/app/logo.png',
-                width: 120,
+              SlideTransition(
+                position: _logoSlide,
+                child: Image.asset(
+                  'assets/app/logo.png',
+                  width: 120,
+                ),
               ),
               SizedBox(height: 16),
-              Text(
-                'Quebra-Galho',
-                style: TextStyle(
-                  fontSize: 24,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 1.2,
+              SlideTransition(
+                position: _textSlide,
+                child: Text(
+                  'Quebra-Galho',
+                  style: TextStyle(
+                    fontSize: 26,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.3,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(0, 2),
+                        blurRadius: 6,
+                        color: Colors.black.withOpacity(0.5),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

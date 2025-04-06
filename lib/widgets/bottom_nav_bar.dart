@@ -23,19 +23,19 @@ class BottomNavBar extends StatelessWidget {
         icon: Icon(Icons.calculate),
         title: "Calculadora",
         activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
-        inactiveColorPrimary: Colors.grey,
+        inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.map),
         title: "Mapa",
         activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
-        inactiveColorPrimary: Colors.grey,
+        inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.settings),
         title: "Config",
         activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
-        inactiveColorPrimary: Colors.grey,
+        inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
       ),
     ];
   }
