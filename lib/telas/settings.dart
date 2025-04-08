@@ -18,7 +18,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                      centerTitle: true,
                      title: Image.asset(
                             'assets/app/logo.png',
-                            height: 40, // ajuste a altura da logo conforme necessário
+                            height: 40, 
                             ),
                     ),
       // 

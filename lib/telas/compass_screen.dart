@@ -1,64 +1,87 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:quebra_galho/utils/compass_custompainter.dart';
 
 class CompassScreen extends StatelessWidget {
+  const CompassScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: Color(0xFF121212), // mesma cor de fundo que o app
         elevation: 0,
         centerTitle: true,
         title: Image.asset(
-          'assets/app/logo.png',
-          height: 40,
+                  'assets/app/logo.png',
+                  height: 40,
         ),
       ),
-      body: Center(
-        child: StreamBuilder<CompassEvent>(
-          stream: FlutterCompass.events,
-          builder: (context, snapshot) {
-            if (snapshot.hasError || snapshot.data == null) {
-              return Text('Bússola não disponível',
-                  style: TextStyle(color: Colors.white));
-            }
+      body: StreamBuilder<CompassEvent>(
+        stream: FlutterCompass.events,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Erro ao ler direção: ${snapshot.error}'),
+            );
+          }
 
-            double? direction = snapshot.data!.heading;
-            if (direction == null) return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+          final CompassEvent? compassData = snapshot.data;
+
+          if (compassData == null || compassData.heading == null) {
+            return const Center(
+              child: Text("Dispositivo sem sensores disponíveis!"),
+            );
+          }
+
+          final double direction = compassData.heading!;
+
+          return SizedBox.expand(
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                Container(
-                  padding: EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Color(0xFF1C4352),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Transform.rotate(
-                    angle: (direction * (pi / 180) * -1),
-                    child: Image.asset(
-                      'assets/app/compasso.png',
-                      height: 500,
-                    ),
-                  ),
+                CustomPaint(
+                  size: size,
+                  painter: CompassCustomPainter(angle: direction),
                 ),
-                SizedBox(height: 24),
                 Text(
-                  '${direction.toStringAsFixed(0)}°',
+                  getCardinalDirection(direction),
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[700],
+                    fontSize: 82,
                   ),
                 ),
               ],
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
+  }
+}
+
+String getCardinalDirection(double direction) {
+  if (direction >= 337.5 || direction < 22.5) {
+    return 'N';
+  } else if (direction >= 22.5 && direction < 67.5) {
+    return 'NE';
+  } else if (direction >= 67.5 && direction < 112.5) {
+    return 'E';
+  } else if (direction >= 112.5 && direction < 157.5) {
+    return 'SE';
+  } else if (direction >= 157.5 && direction < 202.5) {
+    return 'S';
+  } else if (direction >= 202.5 && direction < 247.5) {
+    return 'SW';
+  } else if (direction >= 247.5 && direction < 292.5) {
+    return 'W';
+  } else {
+    return 'NW';
   }
 }
