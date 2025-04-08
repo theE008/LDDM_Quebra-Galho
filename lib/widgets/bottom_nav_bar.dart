@@ -33,7 +33,7 @@ class BottomNavBar extends StatelessWidget {
       ),
       PersistentBottomNavBarItem(
         icon: Icon(Icons.settings),
-        title: "Config",
+        title: "Ajustes",
         activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
         inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
       ),
