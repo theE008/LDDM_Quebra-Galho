@@ -58,7 +58,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
   Widget build(BuildContext context) {
     final initialCenter = points.isNotEmpty
         ? LatLng(points.last.latitude, points.last.longitude)
-        : LatLng(-15.793889, -47.882778); // Brasília como fallback
+        : LatLng(-19.912998, -43.940933);
 
     return Scaffold(
       appBar: AppBar(backgroundColor: Color(0xFF121212), // mesma cor de fundo que o app

@@ -3,6 +3,7 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../telas/gps_area_calculator.dart';
 import '../telas/map_screen.dart';
 import '../telas/settings.dart';
+import '../telas/compass_screen.dart';
 
 class BottomNavBar extends StatelessWidget {
   final PersistentTabController controller;
@@ -13,6 +14,7 @@ class BottomNavBar extends StatelessWidget {
     return [
       GPSAreaCalculator(),
       MapScreen(),
+      CompassScreen(),
       SettingsScreen(),
     ];
   }
@@ -28,6 +30,12 @@ class BottomNavBar extends StatelessWidget {
       PersistentBottomNavBarItem(
         icon: Icon(Icons.map),
         title: "Mapa",
+        activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
+        inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
+      ),
+      PersistentBottomNavBarItem(
+        icon: Icon(Icons.explore),
+        title: "Bússola",
         activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
         inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
       ),
