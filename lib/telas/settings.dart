@@ -8,20 +8,22 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool isDarkMode = false;
   bool notificationsEnabled = true;
-  double volume = 0.5;
+  bool locationEnabled = false;
+  bool autoUpdate = true;
+  bool vibrationFeedback = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Color(0xFF121212), // mesma cor de fundo que o app
-                     elevation: 0,
-                     centerTitle: true,
-                     title: Image.asset(
-                            'assets/app/logo.png',
-                            height: 40, 
-                            ),
-                    ),
-      // 
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF121212),
+        elevation: 0,
+        centerTitle: true,
+        title: Image.asset(
+          'assets/app/logo.png',
+          height: 40,
+        ),
+      ),
       body: ListView(
         padding: EdgeInsets.all(16),
         children: [
@@ -32,7 +34,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: isDarkMode,
             onChanged: (val) {
               setState(() => isDarkMode = val);
-              
             },
           ),
           _buildSwitchTile(
@@ -43,7 +44,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
               setState(() => notificationsEnabled = val);
             },
           ),
+          _buildSwitchTile(
+            icon: Icons.vibration,
+            title: 'Feedback por Vibração',
+            value: vibrationFeedback,
+            onChanged: (val) {
+              setState(() => vibrationFeedback = val);
+            },
+          ),
           SizedBox(height: 24),
+
+          _buildSectionTitle('Sistema'),
+          _buildSwitchTile(
+            icon: Icons.location_on,
+            title: 'Serviços de Localização',
+            value: locationEnabled,
+            onChanged: (val) {
+              setState(() => locationEnabled = val);
+            },
+          ),
+          _buildSwitchTile(
+            icon: Icons.system_update,
+            title: 'Atualização Automática',
+            value: autoUpdate,
+            onChanged: (val) {
+              setState(() => autoUpdate = val);
+            },
+          ),
+
+          SizedBox(height: 24),
+
           _buildSectionTitle('Conta'),
           _buildActionTile(
             icon: Icons.logout,
@@ -82,7 +112,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       margin: EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        // 🔵 Cor do botão switch tile (cartão de configuração)
         color: Color(0xFF1C4352),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -107,7 +136,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         margin: EdgeInsets.only(bottom: 12),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         decoration: BoxDecoration(
-          // 🔴 Cor do botão "Sair"
           color: Colors.redAccent,
           borderRadius: BorderRadius.circular(16),
         ),

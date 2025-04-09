@@ -1,9 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:quebra_galho/utils/compass_custompainter.dart';
+import 'dart:math' as math;
 
-class CompassScreen extends StatelessWidget {
+class CompassScreen extends StatefulWidget {
   const CompassScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CompassScreen> createState() => _CompassScreenState();
+}
+
+class _CompassScreenState extends State<CompassScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _rotationController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _rotationController = AnimationController(
+      duration: const Duration(seconds: 5),
+      vsync: this,
+    )..repeat(); // gira em loop
+  }
+
+  @override
+  void dispose() {
+    _rotationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,55 +35,81 @@ class CompassScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF121212), // mesma cor de fundo que o app
+        backgroundColor: const Color(0xFF121212),
         elevation: 0,
         centerTitle: true,
         title: Image.asset(
-                  'assets/app/logo.png',
-                  height: 40,
+          'assets/app/logo.png',
+          height: 40,
         ),
       ),
       body: StreamBuilder<CompassEvent>(
         stream: FlutterCompass.events,
         builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Erro ao ler direção: ${snapshot.error}'),
-            );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
           final CompassEvent? compassData = snapshot.data;
+          final double? direction = compassData?.heading;
 
-          if (compassData == null || compassData.heading == null) {
-            return const Center(
-              child: Text("Dispositivo sem sensores disponíveis!"),
+          if (direction != null) {
+            // Sensor disponível – usa direção real
+            return SizedBox.expand(
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CustomPaint(
+                    size: size,
+                    painter: CompassCustomPainter(angle: direction),
+                  ),
+                  Text(
+                    getCardinalDirection(direction),
+                    style: TextStyle(
+                      color: Colors.grey[700],
+                      fontSize: 82,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            // Sensor indisponível – anima compasso girando
+            return AnimatedBuilder(
+              animation: _rotationController,
+              builder: (context, child) {
+                double angle = _rotationController.value * 360;
+
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    CustomPaint(
+                      size: size,
+                      painter: CompassCustomPainter(angle: angle),
+                    ),
+                    Positioned(
+                      bottom: 100,
+                      child: Column(
+                        children: [
+                          Text(
+                            "Sensor não disponível",
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 18,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "Compasso girando em modo visual",
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             );
           }
-
-          final double direction = compassData.heading!;
-
-          return SizedBox.expand(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CustomPaint(
-                  size: size,
-                  painter: CompassCustomPainter(angle: direction),
-                ),
-                Text(
-                  getCardinalDirection(direction),
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 82,
-                  ),
-                ),
-              ],
-            ),
-          );
         },
       ),
     );
@@ -67,21 +117,15 @@ class CompassScreen extends StatelessWidget {
 }
 
 String getCardinalDirection(double direction) {
-  if (direction >= 337.5 || direction < 22.5) {
+  if (direction >= 0 && direction < 45) {
     return 'N';
-  } else if (direction >= 22.5 && direction < 67.5) {
-    return 'NE';
-  } else if (direction >= 67.5 && direction < 112.5) {
+  } else if (direction >= 45 && direction < 135) {
     return 'E';
-  } else if (direction >= 112.5 && direction < 157.5) {
-    return 'SE';
-  } else if (direction >= 157.5 && direction < 202.5) {
+  } else if (direction >= 135 && direction < 225) {
     return 'S';
-  } else if (direction >= 202.5 && direction < 247.5) {
-    return 'SW';
-  } else if (direction >= 247.5 && direction < 292.5) {
+  } else if (direction >= 225 && direction < 315) {
     return 'W';
-  } else {
-    return 'NW';
+  } else{
+    return 'W';
   }
 }
