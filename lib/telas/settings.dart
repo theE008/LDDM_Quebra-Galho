@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../utils/theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -13,7 +15,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool vibrationFeedback = true;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) 
+  {
+    final tema = Provider.of<ThemeProvider> (context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF121212),
@@ -31,9 +36,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSwitchTile(
             icon: Icons.dark_mode,
             title: 'Modo Escuro',
-            value: isDarkMode,
+            value: tema.modoEscuro,
             onChanged: (val) {
-              setState(() => isDarkMode = val);
+              tema.definirModo(val);
             },
           ),
           _buildSwitchTile(
