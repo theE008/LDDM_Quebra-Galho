@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../telas/main_screen.dart';
-
+import '../telas/login_screen.dart';
+import '../telas/register_screen.dart';
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -43,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen>
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
           transitionDuration: Duration(milliseconds: 800),
-          pageBuilder: (context, animation, secondaryAnimation) => MainScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => RegisterScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
               opacity: animation,
