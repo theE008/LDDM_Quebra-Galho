@@ -5,6 +5,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 import '../utils/geo_utils.dart';
+import '../utils/area_model.dart';
+import 'saved_areas_screen.dart';
 
 class GPSAreaCalculator extends StatefulWidget {
   @override
@@ -15,6 +17,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
   List<Position> points = [];
   double area = 0.0;
   final MapController mapController = MapController();
+  static List<SavedArea> savedAreas = [];
 
   Future<void> _markPoint() async {
     Position position = await Geolocator.getCurrentPosition(
@@ -24,17 +27,29 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
     setState(() {
       if (points.length < 4) {
         points.add(position);
-
-        // Move a câmera do mapa para o novo ponto
         mapController.move(
           LatLng(position.latitude, position.longitude),
-          mapController.camera.zoom, // Ajustado para a nova API
+          mapController.camera.zoom,
         );
       }
       if (points.length == 4) {
         area = calculateArea(points);
       }
     });
+  }
+
+  void _saveArea() {
+    savedAreas.add(SavedArea(points: List.from(points), area: area));
+    setState(() {
+      points.clear();
+      area = 0.0;
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SavedAreasScreen(savedAreas: savedAreas),
+      ),
+    );
   }
 
   List<Marker> _buildMarkers() {
@@ -61,24 +76,25 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
         : LatLng(-19.912998, -43.940933);
 
     return Scaffold(
-      appBar: AppBar(backgroundColor: Color(0xFF121212), // mesma cor de fundo que o app
-                     elevation: 0,
-                     centerTitle: true,
-                     title: Image.asset(
-                            'assets/app/logo.png',
-                            height: 40, // ajuste a altura da logo conforme necessário
-                            ),
-                    ),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF121212),
+        elevation: 0,
+        centerTitle: true,
+        title: Image.asset(
+          'assets/app/logo.png',
+          height: 40,
+        ),
+      ),
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20), // Cantos arredondados
+              borderRadius: BorderRadius.circular(20),
               child: Container(
-                height: 450, // 👈 altura customizável
+                height: 450,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white12), // opcional: borda fina
+                  border: Border.all(color: Colors.white12),
                 ),
                 child: FlutterMap(
                   mapController: mapController,
@@ -105,34 +121,33 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Pontos marcados: ${points.length}/4",
-                        style: TextStyle(
-                          color: Colors.white, // Cor do texto),
-                        ),
+                  Text(
+                    "Pontos marcados: ${points.length}/4",
+                    style: const TextStyle(color: Colors.white),
                   ),
                   if (points.length == 4)
                     Text("Área: ${area.toStringAsFixed(2)} m²"),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton.icon(
                         onPressed: _markPoint,
-                        icon: Icon(Icons.add, color: Colors.white),
-                        label: Text(
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        label: const Text(
                           "Marcar Ponto",
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF1C4352), // Cor de fundo
-                          foregroundColor: Colors.white, // Cor do texto/ícone
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                          backgroundColor: const Color(0xFF1C4352),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                       ),
-                      SizedBox(width: 12), // Espaço entre os botões
+                      const SizedBox(width: 12),
                       ElevatedButton.icon(
                         onPressed: () {
                           setState(() {
@@ -140,15 +155,15 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                             area = 0.0;
                           });
                         },
-                        icon: Icon(Icons.delete, color: Colors.white),
-                        label: Text(
+                        icon: const Icon(Icons.delete, color: Colors.white),
+                        label: const Text(
                           "Resetar",
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFF2A2A2A), // Cor de fundo do botão resetar
+                          backgroundColor: const Color(0xFF2A2A2A),
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -156,6 +171,22 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                       ),
                     ],
                   ),
+                  if (points.length == 4) ...[
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: _saveArea,
+                      icon: const Icon(Icons.save),
+                      label: const Text("Salvar Área"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
