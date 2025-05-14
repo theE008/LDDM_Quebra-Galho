@@ -101,7 +101,7 @@ class AboutScreen extends StatelessWidget
       ),
       child: Row(
         children: [
-          Icon(icon, color: Theme.of(context).colorScheme.onPrimary, size: 30),
+          Icon(icon, color: Colors.white, size: 30),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -110,7 +110,7 @@ class AboutScreen extends StatelessWidget
                 Text(
                   titulo,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -119,7 +119,7 @@ class AboutScreen extends StatelessWidget
                 Text(
                   subtitulo,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                    color: Colors.white.withOpacity(0.7),
                     fontSize: 16,
                     height: 1.3,
                   ),
@@ -144,7 +144,7 @@ class AboutScreen extends StatelessWidget
       child: Text(
         texto,
         style: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+          color: Colors.white.withOpacity(0.7),
           fontSize: 16,
           height: 1.5,
         ),
@@ -170,7 +170,7 @@ class AboutScreen extends StatelessWidget
               children: [
                 Text('• ',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Colors.white,
                     fontSize: 18,
                   )
                 ),
@@ -178,7 +178,7 @@ class AboutScreen extends StatelessWidget
                   child: Text(
                     item,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.7),
+                      color: Colors.white,
                       fontSize: 16,
                       height: 1.4,
                     ),

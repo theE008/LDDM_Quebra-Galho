@@ -78,6 +78,18 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
             );
           }
           else {
+
+            final corTextoPrincipal = Theme.of(context).textTheme.bodyMedium?.color;
+            final bool modoEscuro = Theme.of(context).brightness == Brightness.dark;
+
+            final corSuave1 = modoEscuro
+              ? corTextoPrincipal?.withOpacity(0.6)
+              : corTextoPrincipal;
+
+            final corSuave2 = modoEscuro
+              ? corTextoPrincipal?.withOpacity(0.5)
+              : corTextoPrincipal?.withOpacity(0.85);
+
             return AnimatedBuilder(
               animation: controlador_animacao,
               builder: (context, child) {
@@ -97,7 +109,7 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
                           Text(
                             "Sensor não disponível",
                             style: TextStyle(
-                              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                              color: corSuave1,
                               fontSize: 18,
                             ),
                           ),
@@ -105,7 +117,7 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
                           Text(
                             "Compasso girando em modo visual",
                             style: TextStyle(
-                              color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.5),
+                              color: corSuave2,
                               fontSize: 16,
                             ),
                           ),

@@ -77,7 +77,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         title: Image.asset(
@@ -123,7 +123,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                 children: [
                   Text(
                     "Pontos marcados: ${points.length}/4",
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                   if (points.length == 4)
                     Text("Área: ${area.toStringAsFixed(2)} m²"),

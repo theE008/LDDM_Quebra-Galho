@@ -119,9 +119,11 @@ Widget _tileComSwitch ({
 {
   final tema = Theme.of(context);
   final corPrimaria = tema.colorScheme.primary;
-  final corTexto = tema.colorScheme.onPrimary;
 
   final bool modoEscuro = tema.brightness == Brightness.dark;
+  final corTexto = modoEscuro
+  ? Colors.white
+  : Colors.black;
 
   final corSwitchAtivo = modoEscuro ? Colors.greenAccent : Colors.blueAccent;
   final corTrilhaSwitch = modoEscuro
