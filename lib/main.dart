@@ -13,6 +13,26 @@ void main ()
   );
 }
 
+// Temas declarados em estilo "json-like"
+final Map<String, ThemeData> temas = {
+  "claro": ThemeData (
+    scaffoldBackgroundColor: Colors.white,
+    brightness: Brightness.light,
+    colorScheme: ColorScheme.light (
+      primary: Color (0xFFFF0000),
+      secondary: Color (0xFF00FF00),
+    ),
+  ),
+  "escuro": ThemeData (
+    scaffoldBackgroundColor: Color (0xFF00FFFF),
+    brightness: Brightness.dark,
+    colorScheme: ColorScheme.dark (
+      primary: Color (0xFF0000FF),
+      secondary: Color (0xFFFFFF00),
+    ),
+  ),
+};
+
 class MeuApp extends StatelessWidget
 {
   @override
@@ -20,16 +40,10 @@ class MeuApp extends StatelessWidget
   {
     final tema = Provider.of<ThemeProvider> (context);
 
-    return MaterialApp(
+    return MaterialApp (
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFF121212),
-        brightness: Brightness.dark,
-      ),
+      theme: temas["claro"],
+      darkTheme: temas["escuro"],
       themeMode: tema.modoEscuro ? ThemeMode.dark : ThemeMode.light,
       home: SplashScreen(),
     );

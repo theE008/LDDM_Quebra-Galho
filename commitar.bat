@@ -12,11 +12,11 @@ rem commitar Melhorias no código que utiliza a árvore B+
 IF "%~1"=="" (
     git add .
     git commit -m "Commit comum"
-    git push origin main
+    git push origin tema
 	
 ) ELSE (
     git add .
     git commit -m "%*"
-    git push origin main
+    git push origin tema
     
 )
