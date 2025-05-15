@@ -32,6 +32,6 @@ class MeuApp extends StatelessWidget
       ),
       themeMode: tema.modoEscuro ? ThemeMode.dark : ThemeMode.light,
       home: SplashScreen(),
-    );
+    ); // teste
   }
 } // estou adicionando isso pra conseguir comiitar
