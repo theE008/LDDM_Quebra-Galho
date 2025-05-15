@@ -34,4 +34,4 @@ class MeuApp extends StatelessWidget
       home: SplashScreen(),
     );
   }
-}
+} // estou adicionando isso pra conseguir comiitar
