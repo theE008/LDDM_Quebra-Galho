@@ -1,3 +1,4 @@
+/* 
 import 'package:flutter/material.dart';
 import '../DataBase/Banco_de_Dados.dart';
 import 'login_screen.dart';
@@ -132,3 +133,4 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
+*/

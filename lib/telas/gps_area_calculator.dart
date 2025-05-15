@@ -4,9 +4,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
-import '../utils/geo_utils.dart';
+import '../DataBase/Banco_de_Dados.dart';
 import '../utils/area_model.dart';
 import 'saved_areas_screen.dart';
+import '../utils/geo_utils.dart';
 
 class GPSAreaCalculator extends StatefulWidget {
   @override
@@ -14,15 +15,34 @@ class GPSAreaCalculator extends StatefulWidget {
 }
 
 class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
+  LatLng? currentLocation;
   List<Position> points = [];
   double area = 0.0;
   final MapController mapController = MapController();
-  static List<SavedArea> savedAreas = [];
 
   Future<void> _markPoint() async {
     Position position = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high,
     );
+
+  
+
+    Future<void> _getCurrentLocation() async {
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        setState(() {
+          currentLocation = LatLng(position.latitude, position.longitude);
+        });
+      } catch (e) {
+        print('Erro ao obter localização atual: $e');
+      }
+    }
+    void initState() {
+      super.initState();
+      _getCurrentLocation();
+    }
 
     setState(() {
       if (points.length < 4) {
@@ -38,19 +58,116 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
     });
   }
 
-  void _saveArea() {
-    savedAreas.add(SavedArea(points: List.from(points), area: area));
-    setState(() {
-      points.clear();
-      area = 0.0;
-    });
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => SavedAreasScreen(savedAreas: savedAreas),
+  void _abrirModalSalvarArea() {
+  TextEditingController tituloController = TextEditingController();
+
+  showModalBottomSheet(
+  context: context,
+  isScrollControlled: true,
+  backgroundColor: const Color(0xFF1C1C1C),
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  ),
+  builder: (context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+          top: 20,
+          left: 20,
+          right: 20,
+        ),
+        child: SingleChildScrollView( // Garante que tudo seja visível ao abrir o teclado
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                "Salvar Área",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: tituloController,
+                decoration: InputDecoration(
+                  labelText: "Título da Área",
+                  labelStyle: const TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Colors.black26,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.white30),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Colors.tealAccent, width: 2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Pontos Marcados:",
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 100,
+                child: ListView.builder(
+                  itemCount: points.length,
+                  itemBuilder: (context, index) {
+                    final p = points[index];
+                    return Text(
+                      "Ponto ${index + 1}: (${p.latitude.toStringAsFixed(5)}, ${p.longitude.toStringAsFixed(5)})",
+                      style: const TextStyle(color: Colors.white70),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final titulo = tituloController.text.trim().isEmpty
+                      ? "Área sem título"
+                      : tituloController.text.trim();
+
+                  try {
+                    final areaId = await Banco_de_dados().salvarAreaComTitulo(area, titulo);
+                    await Banco_de_dados().salvarPontos(areaId, points);
+
+                    if (!mounted) return;
+
+                    setState(() {
+                      points.clear();
+                      area = 0.0;
+                    });
+
+                    await Navigator.of(context).maybePop();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => SavedAreasScreen()),
+                    );
+                  } catch (e, stacktrace) {
+                    debugPrint('Erro ao salvar área: $e\n$stacktrace');
+                  }
+                },
+                icon: const Icon(Icons.check),
+                label: const Text("Confirmar e Salvar"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1C4352),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
       ),
     );
-  }
+    },
+ );
+}
 
   List<Marker> _buildMarkers() {
     return points.asMap().entries.map((entry) {
@@ -71,9 +188,10 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
 
   @override
   Widget build(BuildContext context) {
-    final initialCenter = points.isNotEmpty
+    final initialCenter = currentLocation ??
+    (points.isNotEmpty
         ? LatLng(points.last.latitude, points.last.longitude)
-        : LatLng(-19.912998, -43.940933);
+        : LatLng(-19.912998, -43.940933));
 
     return Scaffold(
       appBar: AppBar(
@@ -97,11 +215,33 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                   border: Border.all(color: Colors.white12),
                 ),
                 child: FlutterMap(
-                  mapController: mapController,
-                  options: MapOptions(
-                    initialCenter: initialCenter,
-                    initialZoom: 16.0,
-                  ),
+                mapController: mapController,
+                options: MapOptions(
+                  initialCenter: initialCenter,
+                  initialZoom: 16.0,
+                  onTap: (tapPosition, latlng) {
+                    setState(() {
+                      if (points.length < 4) {
+                        points.add(Position(
+                          latitude: latlng.latitude,
+                          longitude: latlng.longitude,
+                          timestamp: DateTime.now(),
+                          accuracy: 0,
+                          altitude: 0,
+                          heading: 0,
+                          speed: 0,
+                          speedAccuracy: 0,
+                          altitudeAccuracy: 0,
+                          headingAccuracy: 0,
+                          isMocked: false,
+                        ));
+                        if (points.length == 4) {
+                          area = calculateArea(points);
+                        }
+                      }
+                    });
+                  },
+                ),
                   children: [
                     TileLayer(
                       urlTemplate: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
@@ -169,16 +309,31 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                           ),
                         ),
                       ),
+                    const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => SavedAreasScreen()),
+                            );
+                          },
+                          icon: const Icon(Icons.bookmark, color: Colors.white),
+                          tooltip: 'Ver áreas salvas',
+                          style: IconButton.styleFrom(
+                            backgroundColor: const Color(0xFF1C4352),
+                            shape: const CircleBorder(),
+                          ),
+                        ),
                     ],
                   ),
                   if (points.length == 4) ...[
                     const SizedBox(height: 12),
                     ElevatedButton.icon(
-                      onPressed: _saveArea,
+                      onPressed: _abrirModalSalvarArea,
                       icon: const Icon(Icons.save),
                       label: const Text("Salvar Área"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: const Color(0xFF1C4352),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                         shape: RoundedRectangleBorder(

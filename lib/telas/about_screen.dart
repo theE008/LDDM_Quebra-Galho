@@ -6,7 +6,7 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFF0000),
+      backgroundColor: const Color(0xFF1C1C1C),
       appBar: AppBar(
         backgroundColor: const Color(0xFF121212),
         elevation: 0,
@@ -28,7 +28,7 @@ class AboutScreen extends StatelessWidget {
           _buildInfoCard(
             icon: Icons.verified,
             title: 'Versão',
-            subtitle: '1.0.0',
+            subtitle: '2.0.0',
           ),
           _buildInfoCard(
             icon: Icons.person,

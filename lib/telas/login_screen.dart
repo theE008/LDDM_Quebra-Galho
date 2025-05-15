@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import '../DataBase/Banco_de_Dados.dart';
 import 'main_screen.dart';
@@ -118,3 +119,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+*/
