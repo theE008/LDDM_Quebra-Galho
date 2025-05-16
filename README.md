@@ -3,8 +3,8 @@
 ## 📌 O que o trabalho faz? 
 > O Quebra-Galho é um aplicativo desenvolvido para a disciplina de Laboratório de Desenvolvimento Móveis (LDDM) da PUC Minas. O projeto tem como objetivo auxiliar pessoas com taréfas de cálculo de área e distância.
 
-## 📌 Banco de Dados:
-> Implementamos um banco de dados ...
+## 🗂️ Banco de Dados:
+> Implementamos um banco de dados que contem 2 tabelas...
 
 ## 👨‍💻 Nomes dos Participantes
 - Bruno Rafael Santos Oliveira
