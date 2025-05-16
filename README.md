@@ -7,6 +7,7 @@
 - Bruno Rafael Santos Oliveira
 - Bruna Pereira
 - Thiago Pereira de Oliveira
+- Daniel Felipe Coelho de Freitas
 
 ## ✅ Checklist de Requisitos
 - [✅] O Aplicativo está com as principais funcionalidades?
