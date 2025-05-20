@@ -7,8 +7,8 @@
 > Implementamos um banco de dados que contem 2 tabelas...
 
 ## 👨‍💻 Nomes dos Participantes
-- Bruno Rafael Santos Oliveira
 - Bruna Pereira
+- Bruno Rafael Santos Oliveira
 - Daniel Felipe Coelho de Freitas
 - Thiago Pereira de Oliveira
 
