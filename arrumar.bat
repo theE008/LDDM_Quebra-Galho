@@ -3,5 +3,8 @@
 rem Arruma dependências, sempre rode ao abrir o projeto
 
 git pull
-flutter pub get
-flutter upgrade
+
+echo Execute isso manualmente, se nao nao irah funcionar
+
+echo flutter upgrade
+echo flutter pub get

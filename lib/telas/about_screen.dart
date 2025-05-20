@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
-class AboutScreen extends StatelessWidget {
-  const AboutScreen({Key? key}) : super(key: key);
+class AboutScreen extends StatelessWidget
+{
+  const AboutScreen ({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build (BuildContext context)
+  {
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1C),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         title: Image.asset(
@@ -19,40 +21,48 @@ class AboutScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildSectionTitle('Informações do Aplicativo'),
-          _buildInfoCard(
+          _tituloSecao(context, 'Informações do Aplicativo'),
+          _cardInfo(
+            context: context,
             icon: Icons.apps,
-            title: 'Nome',
-            subtitle: 'Quebra-Galho',
+            titulo: 'Nome',
+            subtitulo: 'Quebra-Galho',
           ),
-          _buildInfoCard(
+          _cardInfo(
+            context: context,
             icon: Icons.verified,
-            title: 'Versão',
-            subtitle: '2.0.0',
+            titulo: 'Versão',
+            subtitulo: '1.0.0',
           ),
-          _buildInfoCard(
+          _cardInfo(
+            context: context,
             icon: Icons.person,
-            title: 'Desenvolvedores',
-            subtitle: 'Bruno Rafael Santos Oliveira, Bruna, Thiago, Daniel',
+            titulo: 'Desenvolvedores',
+            subtitulo: 'Bruno Rafael Santos Oliveira, Bruna, Thiago, Daniel',
           ),
 
           const SizedBox(height: 24),
-          _buildSectionTitle('Finalidade'),
-          _buildTextCard(
+          _tituloSecao(context, 'Finalidade'),
+          _cardTexto(
+            context,
             'O Quebra-Galho foi criado para auxiliar trabalhadores e curiosos com ferramentas práticas em campo. Medição de áreas, direção e muito mais — tudo na palma da sua mão.',
           ),
 
           const SizedBox(height: 24),
-          _buildSectionTitle('Funcionalidades'),
-          _buildBulletList([
-            'Calculadora de área com GPS',
-            'Bússola simples e prática',
-            'Funciona offline',
-          ]),
+          _tituloSecao(context, 'Funcionalidades'),
+          _listaMarcadores(
+            context,
+            [
+              'Calculadora de área com GPS',
+              'Bússola simples e prática',
+              'Funciona offline',
+            ],
+          ),
 
           const SizedBox(height: 24),
-          _buildSectionTitle('Suporte & Contato'),
-          _buildTextCard(
+          _tituloSecao(context, 'Suporte & Contato'),
+          _cardTexto(
+            context,
             'Para sugestões, dúvidas ou bugs, entre em contato pelo email: suporte@quebragalho.app.',
           ),
         ],
@@ -60,13 +70,14 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _tituloSecao (BuildContext context, String titulo)
+  {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Text(
-        title,
-        style: const TextStyle(
-          color: Color.fromARGB(200, 255, 255, 255),
+        titulo,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.9),
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
@@ -74,16 +85,18 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard({
+  Widget _cardInfo ({
+    required BuildContext context,
     required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
+    required String titulo,
+    required String subtitulo,
+  })
+  {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C4352),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.85),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -95,19 +108,21 @@ class AboutScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
+                  titulo,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  subtitle,
-                  style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                      height: 1.3),
+                  subtitulo,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 16,
+                    height: 1.3,
+                  ),
                 ),
               ],
             ),
@@ -117,18 +132,19 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTextCard(String text) {
+  Widget _cardTexto (BuildContext context, String texto)
+  {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C4352),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.85),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white70,
+        texto,
+        style: TextStyle(
+          color: Colors.white.withOpacity(0.7),
           fontSize: 16,
           height: 1.5,
         ),
@@ -136,38 +152,42 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBulletList(List<String> items) {
+  Widget _listaMarcadores (BuildContext context, List<String> itens)
+  {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF1C4352),
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.85),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: items
-            .map((item) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('• ',
-                          style: TextStyle(
-                              color: Colors.white, fontSize: 18)),
-                      Expanded(
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
-                    ],
+        children: itens.map((item) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('• ',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  )
+                ),
+                Expanded(
+                  child: Text(
+                    item,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      height: 1.4,
+                    ),
                   ),
-                ))
-            .toList(),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }

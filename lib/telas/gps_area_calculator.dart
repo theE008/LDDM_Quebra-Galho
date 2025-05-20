@@ -155,7 +155,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                 icon: const Icon(Icons.check),
                 label: const Text("Confirmar e Salvar"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1C4352),
+                  backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -187,7 +187,10 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) 
+  {
+    final bool modoEscuro = Theme.of(context).brightness == Brightness.dark;
+
     final initialCenter = currentLocation ??
     (points.isNotEmpty
         ? LatLng(points.last.latitude, points.last.longitude)
@@ -263,7 +266,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                 children: [
                   Text(
                     "Pontos marcados: ${points.length}/4",
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: (modoEscuro)? Colors.white : Colors.black),
                   ),
                   if (points.length == 4)
                     Text("Área: ${area.toStringAsFixed(2)} m²"),
@@ -279,7 +282,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1C4352),
+                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                           shape: RoundedRectangleBorder(
@@ -320,7 +323,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                           icon: const Icon(Icons.bookmark, color: Colors.white),
                           tooltip: 'Ver áreas salvas',
                           style: IconButton.styleFrom(
-                            backgroundColor: const Color(0xFF1C4352),
+                            backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
                             shape: const CircleBorder(),
                           ),
                         ),
@@ -333,7 +336,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                       icon: const Icon(Icons.save),
                       label: const Text("Salvar Área"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1C4352),
+                        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                         shape: RoundedRectangleBorder(

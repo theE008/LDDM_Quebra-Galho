@@ -3,39 +3,47 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:quebra_galho/utils/compass_custompainter.dart';
 import 'dart:math' as math;
 
-class CompassScreen extends StatefulWidget {
-  const CompassScreen({Key? key}) : super(key: key);
+class CompassScreen extends StatefulWidget
+{
+  const CompassScreen ({Key? key}) : super(key: key);
 
   @override
-  State<CompassScreen> createState() => _CompassScreenState();
+  State<CompassScreen> createState ()
+  {
+    return _CompassScreenState();
+  }
 }
 
-class _CompassScreenState extends State<CompassScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _rotationController;
+class _CompassScreenState extends State<CompassScreen> with SingleTickerProviderStateMixin
+{
+  late AnimationController controlador_animacao;
 
   @override
-  void initState() {
+  void initState ()
+  {
     super.initState();
 
-    _rotationController = AnimationController(
+    controlador_animacao = AnimationController(
       duration: const Duration(seconds: 5),
       vsync: this,
-    )..repeat(); // gira em loop
+    )..repeat();
   }
 
   @override
-  void dispose() {
-    _rotationController.dispose();
+  void dispose ()
+  {
+    controlador_animacao.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  Widget build (BuildContext context)
+  {
+    final tamanho = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         title: Image.asset(
@@ -46,42 +54,53 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
       body: StreamBuilder<CompassEvent>(
         stream: FlutterCompass.events,
         builder: (context, snapshot) {
-          final CompassEvent? compassData = snapshot.data;
-          final double? direction = compassData?.heading;
+          final CompassEvent? dados_bussola = snapshot.data;
+          final double? direcao = dados_bussola?.heading;
 
-          if (direction != null) {
-            // Sensor disponível – usa direção real
+          if (direcao != null) {
             return SizedBox.expand(
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   CustomPaint(
-                    size: size,
-                    painter: CompassCustomPainter(angle: direction),
+                    size: tamanho,
+                    painter: CompassCustomPainter(angle: direcao),
                   ),
                   Text(
-                    getCardinalDirection(direction),
+                    getCardinalDirection(direcao),
                     style: TextStyle(
-                      color: Colors.grey[700],
+                      color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.5),
                       fontSize: 82,
                     ),
                   ),
                 ],
               ),
             );
-          } else {
-            // Sensor indisponível – anima compasso girando
+          }
+          else {
+
+            final corTextoPrincipal = Theme.of(context).textTheme.bodyMedium?.color;
+            final bool modoEscuro = Theme.of(context).brightness == Brightness.dark;
+
+            final corSuave1 = modoEscuro
+              ? corTextoPrincipal?.withOpacity(0.6)
+              : corTextoPrincipal;
+
+            final corSuave2 = modoEscuro
+              ? corTextoPrincipal?.withOpacity(0.5)
+              : corTextoPrincipal?.withOpacity(0.85);
+
             return AnimatedBuilder(
-              animation: _rotationController,
+              animation: controlador_animacao,
               builder: (context, child) {
-                double angle = _rotationController.value * 360;
+                double angulo = controlador_animacao.value * 360;
 
                 return Stack(
                   alignment: Alignment.center,
                   children: [
                     CustomPaint(
-                      size: size,
-                      painter: CompassCustomPainter(angle: angle),
+                      size: tamanho,
+                      painter: CompassCustomPainter(angle: angulo),
                     ),
                     Positioned(
                       bottom: 100,
@@ -90,7 +109,7 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
                           Text(
                             "Sensor não disponível",
                             style: TextStyle(
-                              color: Colors.grey[600],
+                              color: corSuave1,
                               fontSize: 18,
                             ),
                           ),
@@ -98,7 +117,7 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
                           Text(
                             "Compasso girando em modo visual",
                             style: TextStyle(
-                              color: Colors.grey[500],
+                              color: corSuave2,
                               fontSize: 16,
                             ),
                           ),
@@ -116,16 +135,17 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
   }
 }
 
-String getCardinalDirection(double direction) {
-  if (direction >= 0 && direction < 45) {
+String getCardinalDirection (double direcao)
+{
+  if (direcao >= 0 && direcao < 45) {
     return 'N';
-  } else if (direction >= 45 && direction < 135) {
+  } else if (direcao >= 45 && direcao < 135) {
     return 'E';
-  } else if (direction >= 135 && direction < 225) {
+  } else if (direcao >= 135 && direcao < 225) {
     return 'S';
-  } else if (direction >= 225 && direction < 315) {
+  } else if (direcao >= 225 && direcao < 315) {
     return 'W';
-  } else{
+  } else {
     return 'W';
   }
 }

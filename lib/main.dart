@@ -13,6 +13,35 @@ void main ()
   );
 }
 
+/** ORIGEM DAS CORES
+ *  
+ * Fundo: #E0F0F0
+ * Tema (Logo):  #04333B
+ * Lesser tema (Fundo da logo): #1B4A52
+ * Branco (Ferramenta): 1B4A52
+ * Detalhes (Brancos das ferramentas): #7DA9B2
+ */
+
+// Temas declarados em estilo "json-like"
+final Map<String, ThemeData> temas = {
+  "claro": ThemeData (
+    scaffoldBackgroundColor: Color (0xFFE0F0F0),
+    brightness: Brightness.light,
+    colorScheme: ColorScheme.light (
+      primary: Color (0xFF04333B),
+      secondary: Color (0xFF1B4A52),
+    ),
+  ),
+  "escuro": ThemeData (
+    scaffoldBackgroundColor: Color (0xFF000011),
+    brightness: Brightness.dark,
+    colorScheme: ColorScheme.dark (
+      primary: Color (0xFF011223),
+      secondary: Color (0xFF203040),
+    ),
+  ),
+};
+
 class MeuApp extends StatelessWidget
 {
   @override
@@ -20,18 +49,12 @@ class MeuApp extends StatelessWidget
   {
     final tema = Provider.of<ThemeProvider> (context);
 
-    return MaterialApp(
+    return MaterialApp (
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
-        brightness: Brightness.light,
-      ),
-      darkTheme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFF121212),
-        brightness: Brightness.dark,
-      ),
+      theme: temas["claro"],
+      darkTheme: temas["escuro"],
       themeMode: tema.modoEscuro ? ThemeMode.dark : ThemeMode.light,
       home: SplashScreen(),
-    ); // teste
+    );
   }
-} // estou adicionando isso pra conseguir comiitar
+}
