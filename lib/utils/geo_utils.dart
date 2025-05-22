@@ -1,27 +1,31 @@
-import 'dart:math';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 
 double calculateArea(List<Position> points) {
   if (points.length < 3) return 0.0;
 
-  const double radius = 6371000; // Raio da Terra em metros
-  double total = 0.0;
+  final Distance distance = const Distance();
+  final LatLng center = LatLng(
+    points.map((p) => p.latitude).reduce((a, b) => a + b) / points.length,
+    points.map((p) => p.longitude).reduce((a, b) => a + b) / points.length,
+  );
 
-  for (int i = 0; i < points.length; i++) {
-    int j = (i + 1) % points.length;
+  // Converte os pontos geográficos em coordenadas locais (X, Y)
+  List<LatLng> projected = points.map((p) {
+    final dx = distance(center, LatLng(center.latitude, p.longitude));
+    final dy = distance(center, LatLng(p.latitude, center.longitude));
+    return LatLng(
+      p.latitude > center.latitude ? dy : -dy,
+      p.longitude > center.longitude ? dx : -dx,
+    );
+  }).toList();
 
-    double lat1 = points[i].latitude * pi / 180;
-    double lon1 = points[i].longitude * pi / 180;
-    double lat2 = points[j].latitude * pi / 180;
-    double lon2 = points[j].longitude * pi / 180;
-
-    double deltaLon = lon2 - lon1;
-
-    // Formula do polígono esférico:
-    total += deltaLon * (2 + sin(lat1) + sin(lat2));
+  double area = 0.0;
+  for (int i = 0; i < projected.length; i++) {
+    int j = (i + 1) % projected.length;
+    area += projected[i].latitude * projected[j].longitude;
+    area -= projected[j].latitude * projected[i].longitude;
   }
 
-  total = total * radius * radius / 2.0;
-
-  return total.abs();
+  return (area.abs() / 2.0);
 }

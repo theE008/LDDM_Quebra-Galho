@@ -4,6 +4,8 @@ import 'package:quebra_galho/telas/gps_area_calculator.dart';
 import '../DataBase/Banco_de_Dados.dart';
 import '../utils/area_model.dart';
 import 'main_screen.dart';
+import 'package:provider/provider.dart';           
+import '../utils/theme_provider.dart';
 
 
 class SavedAreasScreen extends StatefulWidget {
@@ -127,7 +129,7 @@ void _editarArea(int index) async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         title: Image.asset(
@@ -180,22 +182,6 @@ void _editarArea(int index) async {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          } else {
-            // Talvez navegue para a home ou outra tela segura
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => GPSAreaCalculator()),
-            );
-          }
-        },
-        label: const Text("Voltar"),
-        backgroundColor: const Color(0xFF1C4352),
-        icon: const Icon(Icons.arrow_back),
-      ),
     );
   }
 }
