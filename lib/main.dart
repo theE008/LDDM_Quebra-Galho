@@ -31,6 +31,14 @@ final Map<String, ThemeData> temas = {
       primary: Color (0xFF04333B), // cor do botão
       secondary: Color (0xFF1B4A52), 
     ),
+    appBarTheme: AppBarTheme (
+      backgroundColor: Color (0xFFE0F0F0),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Color (0xFFE0F0F0),
+      selectedItemColor: Colors.blueAccent,
+      unselectedItemColor: Colors.grey,
+    ),
   ),
   "escuro": ThemeData (
     scaffoldBackgroundColor: Color (0xFF000011),
@@ -38,6 +46,14 @@ final Map<String, ThemeData> temas = {
     colorScheme: ColorScheme.dark (
       primary: Color (0xFF011223), // cor do botão
       secondary: Color (0xFF203040), // cor de fundo
+    ),
+    appBarTheme: AppBarTheme (
+      backgroundColor: Color (0xFF000011),
+    ),
+    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      backgroundColor: Color (0xFF000011),
+      selectedItemColor: Colors.greenAccent,
+      unselectedItemColor: Colors.grey,
     ),
   ),
 };

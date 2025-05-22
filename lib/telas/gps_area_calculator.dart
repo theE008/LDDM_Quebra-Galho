@@ -3,6 +3,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:provider/provider.dart';
+import '../utils/theme_provider.dart';
 
 import '../DataBase/Banco_de_Dados.dart';
 import '../utils/area_model.dart';
@@ -197,8 +199,9 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
         : LatLng(-19.912998, -43.940933));
 
     return Scaffold(
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF121212),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         centerTitle: true,
         title: Image.asset(
