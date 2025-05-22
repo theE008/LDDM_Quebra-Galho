@@ -25,19 +25,19 @@ void main ()
 // Temas declarados em estilo "json-like"
 final Map<String, ThemeData> temas = {
   "claro": ThemeData (
-    scaffoldBackgroundColor: Color (0xFFE0F0F0),
+    scaffoldBackgroundColor: Color (0xFFE0F0F0), // cor de fundo
     brightness: Brightness.light,
     colorScheme: ColorScheme.light (
-      primary: Color (0xFF04333B),
-      secondary: Color (0xFF1B4A52),
+      primary: Color (0xFF04333B), // cor do botão
+      secondary: Color (0xFF1B4A52), 
     ),
   ),
   "escuro": ThemeData (
     scaffoldBackgroundColor: Color (0xFF000011),
     brightness: Brightness.dark,
     colorScheme: ColorScheme.dark (
-      primary: Color (0xFF011223),
-      secondary: Color (0xFF203040),
+      primary: Color (0xFF011223), // cor do botão
+      secondary: Color (0xFF203040), // cor de fundo
     ),
   ),
 };

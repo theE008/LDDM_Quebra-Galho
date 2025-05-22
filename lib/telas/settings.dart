@@ -79,17 +79,6 @@ class _SettingsScreenState extends State<SettingsScreen>
               setState(() => autoAtualizar = val);
             },
           ),
-          SizedBox(height: 24),
-          _tituloSecao('Conta'),
-          _tileDeAcao(
-            icon: Icons.logout,
-            titulo: 'Sair',
-            aoTocar: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Deslogado!')),
-              );
-            },
-          ),
         ],
       ),
     );

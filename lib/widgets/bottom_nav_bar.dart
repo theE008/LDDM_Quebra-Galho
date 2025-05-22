@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:provider/provider.dart';
+import '../utils/theme_provider.dart';
 import '../telas/gps_area_calculator.dart';
 import '../telas/map_screen.dart';
 import '../telas/settings.dart';
@@ -20,44 +22,52 @@ class BottomNavBar extends StatelessWidget {
     ];
   }
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
+  List<PersistentBottomNavBarItem> _navBarsItems(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final inactive = Theme.of(context)
+            .bottomNavigationBarTheme
+            .unselectedItemColor ??
+        cs.onSurface.withOpacity(0.6);
+
     return [
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.calculate),
+        icon: const Icon(Icons.calculate),
         title: "Calculadora",
-        activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
-        inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
+        activeColorPrimary: cs.primary,
+        inactiveColorPrimary: inactive,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.explore),
+        icon: const Icon(Icons.explore),
         title: "Bússola",
-        activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
-        inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
+        activeColorPrimary: cs.primary,
+        inactiveColorPrimary: inactive,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.settings),
+        icon: const Icon(Icons.settings),
         title: "Ajustes",
-        activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
-        inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
+        activeColorPrimary: cs.primary,
+        inactiveColorPrimary: inactive,
       ),
       PersistentBottomNavBarItem(
-        icon: Icon(Icons.info),
+        icon: const Icon(Icons.info),
         title: "Sobre",
-        activeColorPrimary: const Color.fromARGB(255, 28, 67, 82),
-        inactiveColorPrimary: const Color.fromARGB(255, 221, 220, 220),
+        activeColorPrimary: cs.primary,
+        inactiveColorPrimary: inactive,
       ),
     ];
   }
 
+  // ---------- build ----------
   @override
   Widget build(BuildContext context) {
+    final navBg = Theme.of(context).bottomNavigationBarTheme.backgroundColor ?? Theme.of(context).colorScheme.surface;
     return PersistentTabView(
       context,
       controller: controller,
       screens: _buildScreens(),
-      items: _navBarsItems(),
+      items: _navBarsItems(context),       // agora passa o context
+      backgroundColor: navBg,       // usa a cor do tema
       confineToSafeArea: true,
-      backgroundColor: const Color(0xFF121212),
       handleAndroidBackButtonPress: true,
       resizeToAvoidBottomInset: true,
       stateManagement: true,
