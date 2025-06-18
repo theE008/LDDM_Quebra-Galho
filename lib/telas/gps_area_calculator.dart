@@ -102,7 +102,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1C1C1C),
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -130,7 +130,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                     labelText: 'Título da Área',
                     labelStyle: const TextStyle(color: Colors.white70),
                     filled: true,
-                    fillColor: Colors.black26,
+                    fillColor: Colors.grey,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   style: const TextStyle(color: Colors.white),
