@@ -35,11 +35,11 @@ O app utiliza um **banco de dados local (SQLite)**, contendo:
 ## 👨‍👩‍👧‍👦 Equipe
 
 | Nome                          | Função                             |
-|------------------------------|-------------------------------------|
-| Bruna Cristine Pereira       | Desenvolvimento e Testes            |
-| Bruno Rafael Santos Oliveira | Desenvolvimento Front Back e BD     |
-| Daniel Felipe C. de Freitas  | Desenvolvimento Back e Design       |
-| Thiago Pereira de Oliveira   | Banco de Dados Firebase e Dev Front |
+|------------------------------|-----------------------------------------------------|
+| Bruna Cristine Pereira       | Desenvolvimento e Testes                            |
+| Bruno Rafael Santos Oliveira | Desenvolvimento Front-end, Back-end e Banco de Dados|
+| Daniel Felipe C. de Freitas  | Desenvolvimento Back-end e Design                   |
+| Thiago Pereira de Oliveira   | Desenvolvimento Front-end e Banco de dados Firebase |
 
 
 ## ✅ Checklist Final
