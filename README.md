@@ -4,7 +4,6 @@
 
 O **Quebra-Galho** é um aplicativo Flutter focado em auxiliar pessoas em medições de campo. Ele permite marcar pontos via GPS, calcular áreas geográficas e distâncias com facilidade e armazenar esses dados localmente.
 
----
 
 ## 🧠 Tecnologias Utilizadas
 
@@ -13,7 +12,6 @@ O **Quebra-Galho** é um aplicativo Flutter focado em auxiliar pessoas em mediç
 - SQLite 🗃️  
 - Geolocalização via GPS 📍  
 
----
 
 ## 🗂️ Banco de Dados
 
@@ -23,7 +21,6 @@ O app utiliza um **banco de dados local (SQLite)**, contendo:
 - **Tabela de Áreas Salvas**: Pontos, títulos e áreas calculadas  
 - Suporte a **edição, exclusão e listagem** de dados persistentes  
 
----
 
 ## 🧪 Funcionalidades
 
@@ -34,7 +31,6 @@ O app utiliza um **banco de dados local (SQLite)**, contendo:
 - 🌙 Tema escuro integrado  
 - 🔍 Busca animada e responsiva  
 
----
 
 ## 👨‍👩‍👧‍👦 Equipe
 
@@ -45,7 +41,6 @@ O app utiliza um **banco de dados local (SQLite)**, contendo:
 | Daniel Felipe C. de Freitas  | Desenvolvimento Back e Design       |
 | Thiago Pereira de Oliveira   | Banco de Dados Firebase e Dev Front |
 
----
 
 ## ✅ Checklist Final
 
@@ -55,7 +50,6 @@ O app utiliza um **banco de dados local (SQLite)**, contendo:
 - [✅] Código modular e comentado  
 - [✅] Otimização de desempenho  
 
----
 
 ## 📎 Apêndice
 
