@@ -3,6 +3,8 @@ import 'dart:async';
 import '../telas/main_screen.dart';
 import '../telas/login_screen.dart';
 import '../telas/register_screen.dart';
+import '../utils/theme_provider.dart';
+
 class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -65,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1C4352),
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       body: Center(
         child: FadeTransition(
           opacity: _fadeIn,
@@ -75,9 +77,11 @@ class _SplashScreenState extends State<SplashScreen>
               SlideTransition(
                 position: _logoSlide,
                 child: Image.asset(
-                  'assets/app/logo.png',
-                  width: 120,
-                ),
+                Theme.of(context).brightness == Brightness.light
+                    ? 'assets/app/logo_light.png'
+                    : 'assets/app/logo_dark.png',
+                width: 120,
+              ),
               ),
               SizedBox(height: 16),
               SlideTransition(

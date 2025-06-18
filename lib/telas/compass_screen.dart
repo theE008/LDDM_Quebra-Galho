@@ -47,7 +47,9 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
         elevation: 0,
         centerTitle: true,
         title: Image.asset(
-          'assets/app/logo.png',
+          Theme.of(context).brightness == Brightness.light
+                    ? 'assets/app/logo_light.png'
+                    : 'assets/app/logo_dark.png',
           height: 40,
         ),
       ),

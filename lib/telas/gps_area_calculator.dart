@@ -223,7 +223,9 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
         elevation: 0,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         centerTitle: true,
-        title: Image.asset('assets/app/logo.png', height: 40),
+        title: Image.asset(Theme.of(context).brightness == Brightness.light
+                    ? 'assets/app/logo_light.png'
+                    : 'assets/app/logo_dark.png', height: 40),
       ),
       body: SafeArea(
         child: Column(
