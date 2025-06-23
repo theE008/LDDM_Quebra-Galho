@@ -25,6 +25,7 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
   final List<Position> points = [];
   double area = 0.0;
   final MapController mapController = MapController();
+  final TextEditingController _cepController = TextEditingController();
 
   /* --------------------------- Localização inicial ------------------------ */
   Future<void> _getCurrentLocation() async {
@@ -96,103 +97,109 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
   }
 
   /* --------------------------- Modal salvar área ------------------------- */
-  void _abrirModalSalvarArea() {
-    final tituloController = TextEditingController();
+ void _abrirModalSalvarArea() {
+  final tituloController = TextEditingController();
+  final tema = Theme.of(context);
+  final isDark = tema.brightness == Brightness.dark;
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          top: 20,
-          left: 20,
-          right: 20,
-        ),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Salvar Área',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+  final corTextoPrincipal = isDark ? Colors.white : Colors.black87;
+  final corTextoSecundario = isDark ? Colors.white70 : Colors.black54;
+  final corFundoInput = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => AlertDialog(
+      backgroundColor: tema.appBarTheme.backgroundColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
+      content: StatefulBuilder(
+        builder: (context, setStateDialog) => SizedBox(
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Salvar Área',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: corTextoPrincipal,
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: tituloController,
-                  decoration: InputDecoration(
-                    labelText: 'Título da Área',
-                    labelStyle: const TextStyle(color: Colors.white70),
-                    filled: true,
-                    fillColor: Colors.grey,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  style: const TextStyle(color: Colors.white),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: tituloController,
+                decoration: InputDecoration(
+                  labelText: 'Título da Área',
+                  labelStyle: TextStyle(color: corTextoSecundario),
+                  filled: true,
+                  fillColor: corFundoInput,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Pontos Marcados:',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(color: corTextoPrincipal),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Pontos Marcados:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: corTextoPrincipal,
                 ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 150,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: points.length,
-                    itemBuilder: (_, i) {
-                      final p = points[i];
-                      return Text(
-                        'Ponto ${i + 1}: (${p.latitude.toStringAsFixed(5)}, ${p.longitude.toStringAsFixed(5)})',
-                        style: const TextStyle(color: Colors.white70),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton.icon(
-                  onPressed: () async {
-                    final titulo = tituloController.text.trim().isEmpty
-                        ? 'Área sem título'
-                        : tituloController.text.trim();
-                    try {
-                      final id = await Banco_de_dados().salvarAreaComTitulo(area, titulo);
-                      await Banco_de_dados().salvarPontos(id, points);
-                      if (!mounted) return;
-                      setState(() {
-                        points.clear();
-                        area = 0.0;
-                      });
-                      Navigator.of(context).pop();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => SavedAreasScreen()),
-                      );
-                    } catch (e, s) {
-                      debugPrint('Erro ao salvar área: $e\n$s');
-                    }
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                height: 150,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: points.length,
+                  itemBuilder: (_, i) {
+                    final p = points[i];
+                    return Text(
+                      'Ponto ${i + 1}: (${p.latitude.toStringAsFixed(5)}, ${p.longitude.toStringAsFixed(5)})',
+                      style: TextStyle(color: corTextoSecundario),
+                    );
                   },
-                  icon: const Icon(Icons.check),
-                  label: const Text('Confirmar e Salvar'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
-                    foregroundColor: Colors.white,
-                  ),
                 ),
-                const SizedBox(height: 20),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final titulo = tituloController.text.trim().isEmpty
+                      ? 'Área sem título'
+                      : tituloController.text.trim();
+                  try {
+                    final id = await Banco_de_dados().salvarAreaComTitulo(area, titulo);
+                    await Banco_de_dados().salvarPontos(id, points);
+                    if (!mounted) return;
+                    setState(() {
+                      points.clear();
+                      area = 0.0;
+                    });
+                    Navigator.of(context).pop();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => SavedAreasScreen()),
+                    );
+                  } catch (e, s) {
+                    debugPrint('Erro ao salvar área: $e\n$s');
+                  }
+                },
+                icon: const Icon(Icons.check),
+                label: const Text('Confirmar e Salvar'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: tema.colorScheme.primary.withOpacity(0.85),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   /* ---------------------------- Marcadores mapa -------------------------- */
   List<Marker> _buildMarkers() => points
@@ -207,150 +214,141 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
       .toList();
 
   /* --------------------------------  UI  -------------------------------- */
-  @override
-  Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final initialCenter = currentLocation ??
-        (points.isNotEmpty
-            ? LatLng(points.last.latitude, points.last.longitude)
-            : const LatLng(-19.912998, -43.940933));
+ @override
+Widget build(BuildContext context) {
+  final dark = Theme.of(context).brightness == Brightness.dark;
+  final initialCenter = currentLocation ??
+      (points.isNotEmpty
+          ? LatLng(points.last.latitude, points.last.longitude)
+          : const LatLng(-19.912998, -43.940933));
 
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
+  return Scaffold(
+    resizeToAvoidBottomInset: true,
+    backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+    appBar: AppBar(
+      titleSpacing: 0,
+      elevation: 0,
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      appBar: AppBar(
-        titleSpacing: 0,
-        elevation: 0,
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        centerTitle: true,
-        title: Image.asset(Theme.of(context).brightness == Brightness.light
-                    ? 'assets/app/logo_light.png'
-                    : 'assets/app/logo_dark.png', height: 40),
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            /* -------------------- Mapa (flexível) -------------------- */
-            Expanded(
-              flex: 6,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: FlutterMap(
-                    mapController: mapController,
-                    options: MapOptions(
-                      initialCenter: initialCenter,
-                      initialZoom: 16,
-                      onTap: (_, latLng) {
-                        setState(() {
-                          points.add(
-                            Position(
-                              latitude: latLng.latitude,
-                              longitude: latLng.longitude,
-                              timestamp: DateTime.now(),
-                              accuracy: 0,
-                              altitude: 0,
-                              heading: 0,
-                              speed: 0,
-                              speedAccuracy: 0,
-                              altitudeAccuracy: 0,
-                              headingAccuracy: 0,
-                              isMocked: false,
-                            ),
-                          );
-                          area = points.length >= 3 ? calculateArea(points) : 0.0;
-                        });
-                      },
-                    ),
-                    children: [
-                      TileLayer(
-                        urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                        subdomains: const ['a', 'b', 'c'],
-                        userAgentPackageName: 'com.example.app',
-                      ),
-                      MarkerLayer(markers: _buildMarkers()),
-                      const CurrentLocationLayer(),
-                    ],
+      centerTitle: true,
+      title: Image.asset(
+          Theme.of(context).brightness == Brightness.light
+              ? 'assets/app/logo_light.png'
+              : 'assets/app/logo_dark.png',
+          height: 40),
+    ),
+    body: SafeArea(
+      child: Column(
+        children: [
+          // Caixa de busca fixa em cima do mapa
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
                   ),
+                ],
+              ),
+              child: TextField(
+                controller: _cepController,
+                keyboardType: TextInputType.number,
+                onSubmitted: _searchCep,
+                style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+                decoration: InputDecoration(
+                  hintText: 'Buscar CEP...',
+                  hintStyle: TextStyle(color: Theme.of(context).hintColor),
+                  prefixIcon: const Icon(Icons.search),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Theme.of(context).canvasColor,
                 ),
               ),
             ),
+          ),
 
-            /* --------------- Controles (rolável se precisar) --------------- */
-            Flexible(
-              flex: 4,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                child: Column(
+          // Agora o mapa com controles, ocupa o resto da tela
+          Expanded(
+            flex: 6, //tamanho do mapa
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: FlutterMap(
+                  mapController: mapController,
+                  options: MapOptions(
+                    initialCenter: initialCenter,
+                    initialZoom: 16,
+                    onTap: (_, latLng) {
+                      setState(() {
+                        points.add(
+                          Position(
+                            latitude: latLng.latitude,
+                            longitude: latLng.longitude,
+                            timestamp: DateTime.now(),
+                            accuracy: 0,
+                            altitude: 0,
+                            heading: 0,
+                            speed: 0,
+                            speedAccuracy: 0,
+                            altitudeAccuracy: 0,
+                            headingAccuracy: 0,
+                            isMocked: false,
+                          ),
+                        );
+                        area = points.length >= 3 ? calculateArea(points) : 0.0;
+                      });
+                    },
+                  ),
                   children: [
+                    TileLayer(
+                      urlTemplate: Theme.of(context).brightness == Brightness.dark
+                          ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                          : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                      subdomains: const ['a', 'b', 'c'],
+                      userAgentPackageName: 'com.example.app',
+                      retinaMode: RetinaMode.isHighDensity(context), // aqui você ativa o modo retina automaticamente
+                    ),
+                    MarkerLayer(markers: _buildMarkers()),
+                    const CurrentLocationLayer(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Controles embaixo do mapa
+          Flexible(
+            flex: 4,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              child: Column(
+                children: [
+                  Text(
+                    'Pontos marcados: ${points.length}',
+                    style: TextStyle(color: dark ? Colors.white : Colors.black),
+                  ),
+                  if (points.length >= 3)
                     Text(
-                      'Pontos marcados: ${points.length}',
+                      'Área: ${area.toStringAsFixed(2)} m²',
                       style: TextStyle(color: dark ? Colors.white : Colors.black),
                     ),
-                    if (points.length >= 3)
-                      Text(
-                        'Área: ${area.toStringAsFixed(2)} m²',
-                        style: TextStyle(color: dark ? Colors.white : Colors.black),
-                      ),
-                    const SizedBox(height: 16),
-
-                    /* Linha de ações principais */
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton.icon(
-                          onPressed: _markPoint,
-                          icon: const Icon(Icons.add, color: Colors.white),
-                          label: const Text('Marcar Ponto'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              points.clear();
-                              area = 0.0;
-                            });
-                          },
-                          icon: const Icon(Icons.delete, color: Colors.white),
-                          label: const Text('Resetar'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2A2A2A),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => SavedAreasScreen()),
-                            );
-                          },
-                          icon: const Icon(Icons.bookmark, color: Colors.white),
-                          tooltip: 'Ver áreas salvas',
-                          style: IconButton.styleFrom(
-                            backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
-                            shape: const CircleBorder(),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    if (points.length >= 3) ...[
-                      const SizedBox(height: 12),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
                       ElevatedButton.icon(
-                        onPressed: _abrirModalSalvarArea,
-                        icon: const Icon(Icons.save),
-                        label: const Text('Salvar Área'),
+                        onPressed: _markPoint,
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        label: const Text('Marcar Ponto'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
                           foregroundColor: Colors.white,
@@ -358,14 +356,61 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                         ),
                       ),
+                      const SizedBox(width: 12),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            points.clear();
+                            area = 0.0;
+                          });
+                        },
+                        icon: const Icon(Icons.delete, color: Colors.white),
+                        label: const Text('Resetar'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2A2A2A),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => SavedAreasScreen()),
+                          );
+                        },
+                        icon: const Icon(Icons.bookmark, color: Colors.white),
+                        tooltip: 'Ver áreas salvas',
+                        style: IconButton.styleFrom(
+                          backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
+                          shape: const CircleBorder(),
+                        ),
+                      ),
                     ],
+                  ),
+                  if (points.length >= 3) ...[
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: _abrirModalSalvarArea,
+                      icon: const Icon(Icons.save),
+                      label: const Text('Salvar Área'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.85),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      ),
+                    ),
                   ],
-                ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
+    )
+   );
   }
 }

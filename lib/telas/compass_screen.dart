@@ -70,8 +70,8 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
                   ),
                   Text(
                     getCardinalDirection(direcao),
-                    style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyLarge?.color?.withOpacity(0.5),
+                    style: const TextStyle(
+                      color: Colors.black,
                       fontSize: 82,
                     ),
                   ),
