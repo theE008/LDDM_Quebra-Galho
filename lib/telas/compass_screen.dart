@@ -137,17 +137,26 @@ class _CompassScreenState extends State<CompassScreen> with SingleTickerProvider
   }
 }
 
-String getCardinalDirection (double direcao)
+String getCardinalDirection (double angulo)
 {
-  if (direcao >= 0 && direcao < 45) {
-    return 'N';
-  } else if (direcao >= 45 && direcao < 135) {
-    return 'E';
-  } else if (direcao >= 135 && direcao < 225) {
+  if ((angulo > 157.5 && angulo <= 180) || (angulo >= -180 && angulo < -157.5)) {
     return 'S';
-  } else if (direcao >= 225 && direcao < 315) {
-    return 'W';
+  } else if (angulo >= -157.5 && angulo < -112.5) {
+    return 'SO';
+  } else if (angulo >= -112.5 && angulo < -67.5) {
+    return 'O';
+  } else if (angulo >= -67.5 && angulo < -22.5) {
+    return 'NO';
+  } else if (angulo >= -22.5 && angulo < 22.5) {
+    return 'N';
+  } else if (angulo >= 22.5 && angulo < 67.5) {
+    return 'NE';
+  } else if (angulo >= 67.5 && angulo < 112.5) {
+    return 'L';
+  } else if (angulo >= 112.5 && angulo <= 157.5) {
+    return 'SE';
   } else {
-    return 'W';
+    return '?'; // segurança extra
   }
 }
+

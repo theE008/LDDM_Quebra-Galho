@@ -36,7 +36,7 @@ class AboutScreen extends StatelessWidget {
             context: context,
             icon: Icons.verified,
             titulo: 'Versão',
-            subtitulo: '2.0.1',
+            subtitulo: '0.4.1',
           ),
           _cardInfo(
             context: context,

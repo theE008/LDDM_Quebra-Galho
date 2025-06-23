@@ -114,12 +114,17 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 10),
       content: StatefulBuilder(
-        builder: (context, setStateDialog) => SizedBox(
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+      builder: (context, setStateDialog) => SizedBox(
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.75,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
               Text(
                 'Salvar Área',
                 style: TextStyle(
@@ -194,7 +199,9 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
                 ),
               ),
             ],
-          ),
+            ),
+           ),
+         ),
         ),
       ),
     ),
@@ -212,6 +219,27 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
         ),
       )
       .toList();
+
+  /* -------------------------------- Linha entre marcadores -------------- */
+
+  List<Polyline> _buildPolyline(bool darkMode) {
+  if (points.length < 2) return [];
+
+  final latLngPoints = points.map((p) => LatLng(p.latitude, p.longitude)).toList();
+
+  // Fecha o polígono unindo o último ponto ao primeiro
+  if (latLngPoints.length >= 3) {
+    latLngPoints.add(latLngPoints.first);
+  }
+  
+  return [
+    Polyline(
+      points: points.map((p) => LatLng(p.latitude, p.longitude)).toList(),
+      color: darkMode ? Colors.tealAccent : Colors.blueAccent,
+      strokeWidth: 4.0,
+    )
+  ];
+}
 
   /* --------------------------------  UI  -------------------------------- */
  @override
@@ -317,6 +345,7 @@ Widget build(BuildContext context) {
                       userAgentPackageName: 'com.example.app',
                       retinaMode: RetinaMode.isHighDensity(context), // aqui você ativa o modo retina automaticamente
                     ),
+                    PolylineLayer(polylines: _buildPolyline(dark)),
                     MarkerLayer(markers: _buildMarkers()),
                     const CurrentLocationLayer(),
                   ],
