@@ -125,13 +125,26 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-              Text(
-                'Salvar Área',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: corTextoPrincipal,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Salvar Área',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: corTextoPrincipal,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    color: corTextoPrincipal,
+                    tooltip: 'Fechar',
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               TextField(
@@ -227,14 +240,13 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
 
   final latLngPoints = points.map((p) => LatLng(p.latitude, p.longitude)).toList();
 
-  // Fecha o polígono unindo o último ponto ao primeiro
   if (latLngPoints.length >= 3) {
-    latLngPoints.add(latLngPoints.first);
+    latLngPoints.add(latLngPoints.first); // Fecha o polígono
   }
-  
+
   return [
     Polyline(
-      points: points.map((p) => LatLng(p.latitude, p.longitude)).toList(),
+      points: latLngPoints, // <- usa a lista correta agora
       color: darkMode ? Colors.tealAccent : Colors.blueAccent,
       strokeWidth: 4.0,
     )
