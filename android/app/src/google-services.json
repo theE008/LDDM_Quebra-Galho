@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "828002650333",
+    "project_id": "quebragalho-c3832",
+    "storage_bucket": "quebragalho-c3832.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:828002650333:android:5192b7e9f12407254bb334",
+        "android_client_info": {
+          "package_name": "com.eks.regua"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_c41ekK6Aigex9LKIHrYkl-Xh00skack"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
