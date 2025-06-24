@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'main_screen.dart';
 import 'new_register_screen.dart';
 
+import 'package:provider/provider.dart';           
+import '../utils/theme_provider.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -16,35 +19,52 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
 
   void _login() async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+
+      if (userCredential.user != null) {
+        // Login bem sucedido
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Login realizado com sucesso!')),
         );
 
-        if (userCredential.user != null) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => MainScreen()),
-          );
-        }
-      } on FirebaseAuthException catch (e) {
-        String message = 'Erro ao entrar';
-
-        if (e.code == 'user-not-found') {
-          message = 'Usuário não encontrado.';
-        } else if (e.code == 'wrong-password') {
-          message = 'Senha incorreta.';
-        } else if (e.code == 'invalid-email') {
-          message = 'E-mail inválido.';
-        }
-
+        // Navega para a próxima tela
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => MainScreen()),
+        );
+      } else {
+        // Caso improvável, mas só pra garantir
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
+          const SnackBar(content: Text('Falha ao realizar login.')),
         );
       }
+    } on FirebaseAuthException catch (e) {
+      String message = 'Erro ao entrar';
+
+      if (e.code == 'user-not-found') {
+        message = 'Usuário não encontrado.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Senha incorreta.';
+      } else if (e.code == 'invalid-email') {
+        message = 'E-mail inválido.';
+      } else if (e.code == 'network-request-failed') {
+        message = 'Falha de conexão. Verifique sua internet.';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    } catch (e) {
+      // Erro inesperado
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro inesperado: $e')),
+      );
     }
   }
 
@@ -60,83 +80,96 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.lock_outline, size: 80, color: theme.primaryColor),
-              const SizedBox(height: 20),
-              Text(
-                'Bem-vindo de volta!',
-                style: theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 10),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    const SizedBox(height: 30),
-                    TextFormField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        labelText: 'E-mail',
-                        border: OutlineInputBorder(
+    backgroundColor: theme.scaffoldBackgroundColor,
+    appBar: AppBar(
+      elevation: 0,
+      backgroundColor: theme.appBarTheme.backgroundColor,
+      iconTheme: IconThemeData(
+        color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
+      ),
+    ),
+    body: Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.lock_outline, size: 80, color: theme.bottomNavigationBarTheme.selectedItemColor),
+            const SizedBox(height: 20),
+            Text(
+              'Bem-vindo de volta!',
+              style: theme.textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 10),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 30),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      labelText: 'E-mail',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (value) =>
+                        value!.isEmpty ? 'Informe o e-mail' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Senha',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    validator: (value) =>
+                        value!.isEmpty ? 'Informe a senha' : null,
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.bottomNavigationBarTheme.selectedItemColor,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) =>
-                          value!.isEmpty ? 'Informe o e-mail' : null,
+                      child: const Text('Entrar'),
                     ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: 'Senha',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const RegisterScreen(),
                         ),
-                      ),
-                      validator: (value) =>
-                          value!.isEmpty ? 'Informe a senha' : null,
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: _login,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text('Entrar'),
+                      );
+                    },
+                    child: Text(
+                      'Ainda não tem uma conta? Registre-se',
+                      style: TextStyle(
+                        color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const RegisterScreen(), // <- ERR registerScreen isnt a class
-                          ),
-                        );
-                      },
-                      child: const Text('Ainda não tem uma conta? Registre-se'),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
+    ),
+  );
   }
 }

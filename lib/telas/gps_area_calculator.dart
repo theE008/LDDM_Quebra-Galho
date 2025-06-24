@@ -6,6 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../widgets/user_sidebar.dart';
 
 import '../DataBase/Banco_de_Dados.dart';
 import '../utils/geo_utils.dart';
@@ -265,17 +266,31 @@ Widget build(BuildContext context) {
   return Scaffold(
     resizeToAvoidBottomInset: true,
     backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+
     appBar: AppBar(
       titleSpacing: 0,
       elevation: 0,
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       centerTitle: true,
       title: Image.asset(
-          Theme.of(context).brightness == Brightness.light
-              ? 'assets/app/logo_light.png'
-              : 'assets/app/logo_dark.png',
-          height: 40),
+        Theme.of(context).brightness == Brightness.light
+            ? 'assets/app/logo_light.png'
+            : 'assets/app/logo_dark.png',
+        height: 40,
+      ),
+       actions: [
+        Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Scaffold.of(context).openEndDrawer();
+            },
+          ),
+        ),
+      ],
     ),
+  endDrawer: const UserSidebar(),
+
     body: SafeArea(
       child: Column(
         children: [

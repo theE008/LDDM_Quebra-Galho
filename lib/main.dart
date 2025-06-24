@@ -4,6 +4,8 @@ import 'package:quebra_galho/utils/theme_provider.dart';
 import 'package:quebra_galho/widgets/splash_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'telas/new_login_screen.dart';
+import 'telas/new_register_screen.dart';
 
 void main () async
 {
@@ -76,6 +78,10 @@ class MeuApp extends StatelessWidget
       darkTheme: temas["escuro"],
       themeMode: tema.modoEscuro ? ThemeMode.dark : ThemeMode.light,
       home: SplashScreen(),
+      routes: {
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
+      },
     );
   }
 }

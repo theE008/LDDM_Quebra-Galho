@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'main_screen.dart';
 
+import 'package:provider/provider.dart';           
+import '../utils/theme_provider.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -68,7 +71,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.background,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        iconTheme: IconThemeData(
+          color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
@@ -77,7 +87,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.person_add, size: 80, color: theme.primaryColor),
+                Icon(Icons.person_add, size: 80, color: theme.bottomNavigationBarTheme.selectedItemColor),
                 const SizedBox(height: 20),
                 Text(
                   'Crie sua conta',
@@ -128,6 +138,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: ElevatedButton(
                     onPressed: _register,
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.bottomNavigationBarTheme.selectedItemColor,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
