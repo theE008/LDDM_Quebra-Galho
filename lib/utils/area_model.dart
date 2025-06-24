@@ -5,6 +5,7 @@ class SavedArea {
   final double area;
   final int? id;
   final String? titulo;
+  final bool isShared;
 
-  SavedArea({required this.points, required this.area, this.id, this.titulo});
+  SavedArea({required this.points, required this.area, this.id, this.titulo, this.isShared = false,});
 }
