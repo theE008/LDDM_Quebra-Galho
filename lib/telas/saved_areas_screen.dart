@@ -11,6 +11,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 
+
 class SavedAreasScreen extends StatefulWidget {
   @override
   State<SavedAreasScreen> createState() => _SavedAreasScreenState();
@@ -23,12 +24,31 @@ class _SavedAreasScreenState extends State<SavedAreasScreen> {
   @override
   void initState() {
     super.initState();
+    _registrarUsuario();
     _loadSavedAreas();
+  }
+
+  Future<void> _registrarUsuario() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return; // usuário anônimo ou não logado
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    if (!doc.exists) {
+      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+        'uid': user.uid,
+        'email': user.email,
+      });
+    }
   }
 
   Future<void> _loadSavedAreas() async {
     final db = Banco_de_dados();
     final user = FirebaseAuth.instance.currentUser;
+    
     List<Map<String, dynamic>> areasData = await db.buscarAreas();
     List<SavedArea> areasList = [];
     List<int> ids = [];
@@ -150,11 +170,25 @@ class _SavedAreasScreenState extends State<SavedAreasScreen> {
           ),
           TextButton(
             onPressed: () async {
-              final uid = controller.text.trim();
-              if (uid.isEmpty) return;
+              final email = controller.text.trim();
+                if (email.isEmpty) return;
 
-              final currentUser = FirebaseAuth.instance.currentUser;
-              final firestore = FirebaseFirestore.instance;
+                final currentUser = FirebaseAuth.instance.currentUser;  
+                final firestore = FirebaseFirestore.instance;
+                final result = await firestore
+                    .collection('users')
+                    .where('email', isEqualTo: email)
+                    .limit(1)
+                    .get();
+
+                if (result.docs.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Usuário não encontrado. Verifique o e-mail.')),
+                  );
+                  return;
+                }
+
+              final uid = result.docs.first.data()['uid'];
 
               await firestore.collection('shared_areas').add({
                 'owner': currentUser?.uid,
