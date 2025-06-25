@@ -417,6 +417,18 @@ void _editarArea(int index) async {
                                   onPressed: () => _deleteArea(index),
                                   tooltip: 'Deletar',
                                 ),
+                                IconButton(
+                                  icon: const Icon(Icons.map, color: Colors.orange),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => GPSAreaCalculator(initialPoints: area.points),
+                                      ),
+                                    );
+                                  },
+                                  tooltip: 'Visualizar no mapa',
+                                ),
                               ],
                             ),
                           ],

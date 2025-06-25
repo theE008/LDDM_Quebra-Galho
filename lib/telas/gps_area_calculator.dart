@@ -15,8 +15,8 @@ import 'saved_areas_screen.dart';
 
 
 class GPSAreaCalculator extends StatefulWidget {
-  const GPSAreaCalculator({Key? key}) : super(key: key);
-
+  final List<Position>? initialPoints;
+  const GPSAreaCalculator({Key? key, this.initialPoints}) : super(key: key);
   @override
   State<GPSAreaCalculator> createState() => _GPSAreaCalculatorState();
 }
@@ -46,39 +46,79 @@ class _GPSAreaCalculatorState extends State<GPSAreaCalculator> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+    if (widget.initialPoints != null && widget.initialPoints!.isNotEmpty) {
+      points.addAll(widget.initialPoints!);
+      area = points.length >= 3 ? calculateArea(points) : 0.0;
+    }
   }
 
   /* ------------------------------ Buscar CEP   --------------------------- */
   
   Future<void> _searchCep(String cep) async {
-    try {
-      final response = await http.get(Uri.parse('https://viacep.com.br/ws/$cep/json/'));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final logradouro = data['logradouro'];
-        final localidade = data['localidade'];
-        final uf = data['uf'];
+  try {
+    final response = await http.get(
+      Uri.parse('https://viacep.com.br/ws/$cep/json/'),
+    ).timeout(const Duration(seconds: 5));
 
-        final query = "$logradouro, $localidade, $uf, Brasil";
-        final nominatimUrl = Uri.parse('https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent(query)}&format=json');
-        final geoResponse = await http.get(nominatimUrl, headers: {
-          'User-Agent': 'FlutterApp'
-        });
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
 
-        if (geoResponse.statusCode == 200) {
-          final List<dynamic> results = json.decode(geoResponse.body);
-          if (results.isNotEmpty) {
-            final lat = double.parse(results[0]['lat']);
-            final lon = double.parse(results[0]['lon']);
-            mapController.move(LatLng(lat, lon), 16);
+      if (data.containsKey('erro') && data['erro'] == true) {
+        // CEP inválido
+        debugPrint('CEP inválido');
+        return;
+      }
+
+      final logradouro = data['logradouro']?.toString().trim();
+      final localidade = data['localidade']?.toString().trim();
+      final uf = data['uf']?.toString().trim();
+
+      if (localidade == null || uf == null) {
+        debugPrint('Dados insuficientes para busca');
+        return;
+      }
+
+      // Monta a query dependendo dos dados disponíveis
+      final query = (logradouro != null && logradouro.isNotEmpty)
+          ? '$logradouro, $localidade, $uf, Brasil'
+          : '$localidade, $uf, Brasil';
+
+      final nominatimUrl = Uri.parse(
+        'https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent(query)}&format=json&limit=1',
+      );
+
+      final geoResponse = await http.get(nominatimUrl, headers: {
+        'User-Agent': 'FlutterApp',
+      }).timeout(const Duration(seconds: 7));
+
+      if (geoResponse.statusCode == 200) {
+        final List<dynamic> results = json.decode(geoResponse.body);
+
+        if (results.isNotEmpty) {
+          final lat = double.tryParse(results[0]['lat'] ?? '');
+          final lon = double.tryParse(results[0]['lon'] ?? '');
+
+          if (lat != null && lon != null) {
+            setState(() {
+              mapController.move(LatLng(lat, lon), 16);
+            });
+            return;
           }
         }
+        debugPrint('Nenhum resultado encontrado no Nominatim');
+      } else {
+        debugPrint('Erro na API do Nominatim: ${geoResponse.statusCode}');
       }
-    } catch (e) {
-      print("Erro ao buscar CEP: $e");
+    } else {
+      debugPrint('Erro ao buscar CEP no ViaCEP: ${response.statusCode}');
     }
-  
+  } on Exception {
+    debugPrint('Timeout na busca do CEP ou do Nominatim');
+  } catch (e) {
+    debugPrint('Erro ao buscar CEP: $e');
   }
+}
+
   /* ------------------------------ Buscar CEP   --------------------------- */
   
   /* ------------------------------ Marcar ponto --------------------------- */
