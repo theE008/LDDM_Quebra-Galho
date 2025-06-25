@@ -60,8 +60,8 @@ class UserSidebar extends StatelessWidget {
                       icon: const Icon(Icons.login, size: 18),
                       label: const Text('Entrar'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: theme.colorScheme.onPrimary,
+                        backgroundColor: theme.bottomNavigationBarTheme.selectedItemColor,
+                        foregroundColor: theme.scaffoldBackgroundColor,
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
@@ -81,7 +81,8 @@ class UserSidebar extends StatelessWidget {
                       icon: const Icon(Icons.person_add, size: 18),
                       label: const Text('Registrar'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: theme.colorScheme.primary,
+                        backgroundColor: theme.bottomNavigationBarTheme.selectedItemColor,
+                        foregroundColor: theme.scaffoldBackgroundColor,
                         side: BorderSide(color: theme.colorScheme.primary),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
