@@ -67,10 +67,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (mensagemErro.contains("type 'List<Object?>' is not a subtype of type 'PigeonUserDetails?' in type cast"))
         {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => GPSAreaCalculator()),
-              );
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => GPSAreaCalculator()),
+            (Route<dynamic> route) => false, // Remove todas as rotas anteriores
+          );
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Sucesso!')),
