@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'main_screen.dart';
 import 'new_register_screen.dart';
 
+import '../telas/gps_area_calculator.dart';
+
 import 'package:provider/provider.dart';           
 import '../utils/theme_provider.dart';
 
@@ -61,10 +63,25 @@ class _LoginScreenState extends State<LoginScreen> {
         SnackBar(content: Text(message)),
       );
     } catch (e) {
-      // Erro inesperado
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro inesperado: $e')),
-      );
+      final mensagemErro = e.toString();
+
+        if (mensagemErro.contains("type 'List<Object?>' is not a subtype of type 'PigeonUserDetails?' in type cast"))
+        {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => GPSAreaCalculator()),
+              );
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Sucesso!')),
+          );
+        }
+        else
+        {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erro inesperado: $e')),
+          );
+        }
     }
   }
 
