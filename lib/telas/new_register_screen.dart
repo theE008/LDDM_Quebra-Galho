@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'main_screen.dart';
-
-import 'package:provider/provider.dart';           
+import 'package:provider/provider.dart';
 import '../utils/theme_provider.dart';
+import '../telas/gps_area_calculator.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -18,11 +18,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
+  void showCustomSnackBar(BuildContext context, String message,
+      {Color backgroundColor = Colors.green,
+      IconData icon = Icons.check_circle}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(icon, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: backgroundColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
   void _register() async {
     if (_formKey.currentState!.validate()) {
-      if (passwordController.text.trim() != confirmPasswordController.text.trim()) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('As senhas não coincidem')),
+      if (passwordController.text.trim() !=
+          confirmPasswordController.text.trim()) {
+        showCustomSnackBar(
+          context,
+          'As senhas não coincidem',
+          backgroundColor: Colors.orange,
+          icon: Icons.warning_amber_rounded,
         );
         return;
       }
@@ -35,6 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
 
         if (userCredential.user != null) {
+          showCustomSnackBar(context, 'Cadastro realizado com sucesso!');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => MainScreen()),
@@ -42,6 +67,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         }
       } on FirebaseAuthException catch (e) {
         String message = 'Erro ao registrar';
+        IconData icon = Icons.error_outline;
+        Color color = Colors.red;
 
         if (e.code == 'email-already-in-use') {
           message = 'Este e-mail já está em uso.';
@@ -49,11 +76,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
           message = 'E-mail inválido.';
         } else if (e.code == 'weak-password') {
           message = 'Senha muito fraca.';
+          icon = Icons.warning_amber_rounded;
+          color = Colors.orange;
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
+        showCustomSnackBar(context, message,
+            backgroundColor: color, icon: icon);
+      } catch (e) {
+      final mensagemErro = e.toString();
+
+      if (mensagemErro.contains(
+          "type 'List<Object?>' is not a subtype of type 'PigeonUserDetails?' in type cast")) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => GPSAreaCalculator()),
+          (Route<dynamic> route) => false,
         );
+
+        showCustomSnackBar(context, 'Sucesso!'); 
+        } else{
+        showCustomSnackBar(
+          context,
+          'Erro inesperado: $e',
+          backgroundColor: Colors.red,
+          icon: Icons.error_outline,
+        );
+        }
       }
     }
   }
@@ -76,7 +124,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
         elevation: 0,
         backgroundColor: theme.appBarTheme.backgroundColor,
         iconTheme: IconThemeData(
-          color: theme.brightness == Brightness.dark ? Colors.white : Colors.black,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black,
         ),
       ),
       body: Center(
@@ -87,7 +137,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.person_add, size: 80, color: theme.bottomNavigationBarTheme.selectedItemColor),
+                Icon(Icons.person_add,
+                    size: 80,
+                    color:
+                        theme.bottomNavigationBarTheme.selectedItemColor),
                 const SizedBox(height: 20),
                 Text(
                   'Crie sua conta',
@@ -138,7 +191,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: ElevatedButton(
                     onPressed: _register,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.bottomNavigationBarTheme.selectedItemColor,
+                      backgroundColor: theme
+                          .bottomNavigationBarTheme.selectedItemColor,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
