@@ -154,67 +154,109 @@ class _SavedAreasScreenState extends State<SavedAreasScreen> {
   showDialog(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        title: const Text("Compartilhar área com outro usuário"),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: "UID do usuário",
-            hintText: "Cole o UID ou digite",
+      final theme = Theme.of(context);
+
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Compartilhar área",
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Informe o e-mail do usuário para compartilhar esta área.",
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: controller,
+                decoration: InputDecoration(
+                  labelText: "E-mail do usuário",
+                  hintText: "Digite o e-mail",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.cancel),
+                    label: const Text("Cancelar"),
+                    style: TextButton.styleFrom(
+                      foregroundColor: theme.colorScheme.error,
+                    ),
+                  ),
+                  const Spacer(),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      final email = controller.text.trim();
+                      if (email.isEmpty) return;
+
+                      final currentUser = FirebaseAuth.instance.currentUser;
+                      final firestore = FirebaseFirestore.instance;
+                      final result = await firestore
+                          .collection('users')
+                          .where('email', isEqualTo: email)
+                          .limit(1)
+                          .get();
+
+                      if (result.docs.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Usuário não encontrado. Verifique o e-mail.')),
+                        );
+                        return;
+                      }
+
+                      final uid = result.docs.first.data()['uid'];
+
+                      await firestore.collection('shared_areas').add({
+                        'owner': currentUser?.uid,
+                        'title': area.titulo,
+                        'area': area.area,
+                        'points': area.points.map((p) => {
+                          'lat': p.latitude,
+                          'lng': p.longitude,
+                        }).toList(),
+                        'sharedWith': [uid],
+                        'timestamp': FieldValue.serverTimestamp(),
+                      });
+
+                      Navigator.pop(context);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Área compartilhada com sucesso!')),
+                      );
+                    },
+                    icon: const Icon(Icons.share),
+                    label: const Text("Compartilhar"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.bottomNavigationBarTheme.unselectedItemColor,
+                      foregroundColor: theme.colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancelar"),
-          ),
-          TextButton(
-            onPressed: () async {
-              final email = controller.text.trim();
-                if (email.isEmpty) return;
-
-                final currentUser = FirebaseAuth.instance.currentUser;  
-                final firestore = FirebaseFirestore.instance;
-                final result = await firestore
-                    .collection('users')
-                    .where('email', isEqualTo: email)
-                    .limit(1)
-                    .get();
-
-                if (result.docs.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Usuário não encontrado. Verifique o e-mail.')),
-                  );
-                  return;
-                }
-
-              final uid = result.docs.first.data()['uid'];
-
-              await firestore.collection('shared_areas').add({
-                'owner': currentUser?.uid,
-                'title': area.titulo,
-                'area': area.area,
-                'points': area.points.map((p) => {
-                  'lat': p.latitude,
-                  'lng': p.longitude,
-                }).toList(),
-                'sharedWith': [uid],
-                'timestamp': FieldValue.serverTimestamp(),
-              });
-
-              Navigator.pop(context);
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Área compartilhada com sucesso!')),
-              );
-            },
-            child: const Text("Compartilhar"),
-          ),
-        ],
       );
     },
   );
 }
+
+
 
 void _editarArea(int index) async {
   final areaAtual = savedAreas[index];
@@ -224,72 +266,80 @@ void _editarArea(int index) async {
   final tema = Theme.of(context);
   final isDark = tema.brightness == Brightness.dark;
 
-  final corTitulo = isDark ? Colors.white : Colors.black87;
-  final corLabel = isDark ? Colors.white70 : Colors.black54;
-  final corCursor = tema.colorScheme.primary;
-  final corBordaAtiva = tema.colorScheme.primary;
-  final corBordaInativa = tema.dividerColor;
-  final corFundoDialog = tema.dialogBackgroundColor;
-
-  final corBotaoCancelar = tema.colorScheme.primary;
-  final corBotaoSalvarFundo = tema.colorScheme.primary;
-  final corBotaoSalvarTexto = isDark ? Colors.white : Colors.black;
-
   await showDialog(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        backgroundColor: corFundoDialog,
-        title: Text(
-          "Editar Título da Área",
-          style: TextStyle(color: corTitulo),
-        ),
-        content: TextField(
-          controller: controller,
-          cursorColor: corCursor,
-          style: TextStyle(color: corTitulo),
-          decoration: InputDecoration(
-            labelText: "Título",
-            labelStyle: TextStyle(color: corLabel),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: corBordaInativa, width: 1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: corBordaAtiva, width: 2),
-              borderRadius: BorderRadius.circular(8),
-            ),
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: tema.scaffoldBackgroundColor,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Editar Título da Área",
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: controller,
+                cursorColor: tema.colorScheme.primary,
+                style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                decoration: InputDecoration(
+                  labelText: "Título",
+                  labelStyle: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: tema.dividerColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: tema.colorScheme.primary, width: 2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  TextButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.cancel),
+                    label: const Text("Cancelar"),
+                    style: TextButton.styleFrom(
+                      foregroundColor: tema.colorScheme.error,
+                    ),
+                  ),
+                  const Spacer(),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      final novoTitulo = controller.text.trim();
+                      if (novoTitulo.isNotEmpty) {
+                        await Banco_de_dados().atualizarTituloArea(areaId, novoTitulo);
+                        _loadSavedAreas();
+                      }
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.save),
+                    label: const Text("Salvar"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: tema.bottomNavigationBarTheme.unselectedItemColor,
+                      foregroundColor: tema.colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            style: TextButton.styleFrom(
-              backgroundColor: corBotaoSalvarFundo,
-              foregroundColor: corBotaoSalvarTexto, // texto do botão Cancelar
-            ),
-            child: const Text("Cancelar"),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              final novoTitulo = controller.text.trim();
-              if (novoTitulo.isNotEmpty) {
-                await Banco_de_dados().atualizarTituloArea(areaId, novoTitulo);
-                _loadSavedAreas(); // recarrega os cards
-              }
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: corBotaoSalvarFundo, // fundo botão Salvar
-              foregroundColor: corBotaoSalvarTexto,  // texto botão Salvar
-            ),
-            child: const Text("Salvar"),
-          ),
-        ],
       );
     },
   );
 }
+
 
   @override
   Widget build(BuildContext context) {
