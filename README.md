@@ -50,10 +50,10 @@ O projeto utiliza dois tipos de persistência:
 
 | Nome                          | Função                                                          |
 |------------------------------|------------------------------------------------------------------|
-| Bruna Cristine Pereira       | Desenvolvedora Back-end • Documentação                          |
-| Bruno Rafael Santos Oliveira | Desenvolvedor Front-end • Back-end • Firebase • Documentação    |
-| Daniel Felipe C. de Freitas  | Scrum Master                                                    |
-| Thiago Pereira de Oliveira   | Desenvolvedor Front-end • Firebase                              |
+| Bruna Cristine Pereira       | Desenvolvedora Front-end • Design                                |
+| Bruno Rafael Santos Oliveira | Desenvolvedor Front-end • Back-end • Firebase • Documentação     |
+| Daniel Felipe C. de Freitas  | Scrum Master                                                     |
+| Thiago Pereira de Oliveira   | Desenvolvedor Back-end • Firebase                                |
 
 ---
 
