@@ -104,3 +104,5 @@ Esse projeto nos ajudou a compreender:
 ---
 
 🔗 Repositório: [📎 Acessar no GitHub](https://github.com/theE008/LDDM_Quebra-Galho)
+
+🎬 Trailer: https://youtube.com/shorts/WX3XC44-AuQ?si=o_tJ2c4-V9jqWfbp
